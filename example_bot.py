@@ -44,10 +44,10 @@ class MyStrategy(GameBot):
 
         ##### IMPLEMENT AWESOME STRATEGY HERE ##################
         #print(round_number)
-        #print(self.cur_state)
         #print(hand)
-        if (round_number > 0):
-            self.calculate_state(prev_turn)
+        self.calculate_state(round_number, team, prev_turn)
+        
+        #print(self.cur_state)
         
         
         if len(hand) > self.num_cards:
@@ -63,7 +63,12 @@ class MyStrategy(GameBot):
         if round_number >= 99:
             #print(round_number)
             #print(self.cur_state[team])
+            #print("Team: ", team)
+            #print("Opponent: ", opponent)
+            #print("Opponent state: ", np.absolute(self.cur_state[opponent]))
+            #print(hand)
             if np.absolute(self.cur_state[team]) > self.win_threshold:
+                #print("1")
                 return None
             
             elif np.absolute(self.cur_state[opponent]) > self.win_threshold:
@@ -135,55 +140,127 @@ class MyStrategy(GameBot):
         #######################################################
         return None
     
-    def calculate_state(self, prev_turn):
+    def calculate_state(self, round_number, team, prev_turn):
         action_1 = prev_turn['team0_action']
         action_2 = prev_turn['team1_action']
         
-        #print(action_1)
-        #print(action_2)
-        if action_1 == GameAction.MEASURE:
-            self.cur_state = prev_turn['team0_measurement']
+        if (team == 0):
+            #Apply previous actions for team 0
+            if action_1 == GameAction.MEASURE:
+                #print("1")
+                self.cur_state = prev_turn['team0_measurement']
             
-        elif action_1 == GameAction.PAULIX:
-            X = np.array([[0, 1], [1, 0]])
-            self.cur_state = np.dot(X, self.cur_state)
+            elif action_1 == GameAction.PAULIX:
+                #print("2")
+                X = np.array([[0, 1], [1, 0]])
+                self.cur_state = np.dot(X, self.cur_state)
             
-        elif action_1 == GameAction.PAULIZ:
-            Z = np.array([[1, 0], [0, -1]])
-            self.cur_state = np.dot(Z, self.cur_state)
+            elif action_1 == GameAction.PAULIZ:
+                #print("3")
+                Z = np.array([[1, 0], [0, -1]])
+                self.cur_state = np.dot(Z, self.cur_state)
             
-        elif action_1 == GameAction.HADAMARD:
-            H = np.array([[np.sqrt(1/2), np.sqrt(1/2)], [np.sqrt(1/2), -np.sqrt(1/2)]])
-            self.cur_state = np.dot(H, self.cur_state)
+            elif action_1 == GameAction.HADAMARD:
+                #print("4")
+                H = np.array([[np.sqrt(1/2), np.sqrt(1/2)], [np.sqrt(1/2), -np.sqrt(1/2)]])
+                self.cur_state = np.dot(H, self.cur_state)
             
-        elif action_1 == GameAction.REVERSE:
-            self.cur_direction *= -1
+            elif action_1 == GameAction.REVERSE:
+                #print("5")
+                self.cur_direction *= -1
+                
+            
+            #Apply previous actions for team 1
+            if action_2 == GameAction.MEASURE:
+                #print("1")
+                self.cur_state = prev_turn['team1_measurement']
+            
+            elif action_2 == GameAction.PAULIX:
+                #print("2")
+                X = np.array([[0, 1], [1, 0]])
+                self.cur_state = np.dot(X, self.cur_state)
+            
+            elif action_2 == GameAction.PAULIZ:
+                #print("3")
+                Z = np.array([[1, 0], [0, -1]])
+                self.cur_state = np.dot(Z, self.cur_state)
+            
+            elif action_2 == GameAction.HADAMARD:
+                #print("4")
+                H = np.array([[np.sqrt(1/2), np.sqrt(1/2)], [np.sqrt(1/2), -np.sqrt(1/2)]])
+                self.cur_state = np.dot(H, self.cur_state)
+            
+            elif action_2 == GameAction.REVERSE:
+                #print("5")
+                self.cur_direction *= -1
+                
+                
+            #Rotate
+            if (round_number > 0):
+                rotate = self.rotation_matrix(self.cur_direction*self.theta)
+                #print(self.cur_direction)
+                #print(self.cur_state)
+                self.cur_state = np.dot(rotate, self.cur_state)
+                #print(self.cur_state)
+        else:
+            #Apply previous action from team 1
+            if action_2 == GameAction.MEASURE:
+                #print("1")
+                self.cur_state = prev_turn['team1_measurement']
+            
+            elif action_2 == GameAction.PAULIX:
+                #print("2")
+                X = np.array([[0, 1], [1, 0]])
+                self.cur_state = np.dot(X, self.cur_state)
+            
+            elif action_2 == GameAction.PAULIZ:
+                #rint("3")
+                Z = np.array([[1, 0], [0, -1]])
+                self.cur_state = np.dot(Z, self.cur_state)
+            
+            elif action_2 == GameAction.HADAMARD:
+                #print("4")
+                H = np.array([[np.sqrt(1/2), np.sqrt(1/2)], [np.sqrt(1/2), -np.sqrt(1/2)]])
+                self.cur_state = np.dot(H, self.cur_state)
+            
+            elif action_2 == GameAction.REVERSE:
+                #print("5")
+                self.cur_direction *= -1
+            
+            #Rotate
+            if (round_number > 0):
+                rotate = self.rotation_matrix(self.cur_direction*self.theta)
+                #print(self.cur_direction)
+                #print(self.cur_state)
+                self.cur_state = np.dot(rotate, self.cur_state)
+                #print(self.cur_state)
+            
+            #print(self.cur_state)
+            #Apply previous action from team 0
+            if action_1 == GameAction.MEASURE:
+                #print("1")
+                self.cur_state = prev_turn['team0_measurement']
+            
+            elif action_1 == GameAction.PAULIX:
+                #print("2")
+                X = np.array([[0, 1], [1, 0]])
+                self.cur_state = np.dot(X, self.cur_state)
+            
+            elif action_1 == GameAction.PAULIZ:
+                #print("3")
+                Z = np.array([[1, 0], [0, -1]])
+                self.cur_state = np.dot(Z, self.cur_state)
+            
+            elif action_1 == GameAction.HADAMARD:
+                #print("4")
+                H = np.array([[np.sqrt(1/2), np.sqrt(1/2)], [np.sqrt(1/2), -np.sqrt(1/2)]])
+                self.cur_state = np.dot(H, self.cur_state)
+            
+            elif action_1 == GameAction.REVERSE:
+                #print("5")
+                self.cur_direction *= -1
         
         
-        if action_2 == GameAction.MEASURE:
-            self.cur_state = prev_turn['team1_measurement']
-            
-        elif action_2 == GameAction.PAULIX:
-            X = np.array([[0, 1], [1, 0]])
-            self.cur_state = np.dot(X, self.cur_state)
-            
-        elif action_2 == GameAction.PAULIZ:
-            Z = np.array([[1, 0], [0, -1]])
-            self.cur_state = np.dot(Z, self.cur_state)
-            
-        elif action_2 == GameAction.HADAMARD:
-            H = np.array([[np.sqrt(1/2), np.sqrt(1/2)], [np.sqrt(1/2), -np.sqrt(1/2)]])
-            self.cur_state = np.dot(H, self.cur_state)
-            
-        elif action_2 == GameAction.REVERSE:
-            self.cur_direction *= -1
-        
-        rotate = self.rotation_matrix(self.cur_direction*self.theta)
-        #print(self.cur_direction)
-        #print(self.cur_state)
-        self.cur_state = np.dot(rotate, self.cur_state)
-        #print(self.cur_state)
-    
     def rotate(self, team):
         if self.cur_state[0] > 0 and self.cur_state[1] > 0:
             if team == 0:
@@ -241,5 +318,3 @@ class MyStrategy(GameBot):
     def rotation_matrix(self, theta) -> np.array:
         return np.array([[np.cos(theta / 2), -np.sin(theta / 2)], [np.sin(theta / 2), np.cos(theta / 2)]])
     
-
-                
