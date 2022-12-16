@@ -14,7 +14,7 @@ class MyStrategy(GameBot):
         You can use this to initialize any variables or data structures
         to keep track of things in the game
     '''
-    win_threshold = 0.5
+    win_threshold = 0.9
     
     cur_direction = None
     cur_state = None
@@ -24,9 +24,12 @@ class MyStrategy(GameBot):
     
     theta = 2*np.pi/100.0
     
-    def __init__(self,bot_name, win_threshold=0.5):
+    epsilon = 0.001
+    
+    difference_threshold = 0.1
+    
+    def __init__(self,bot_name):
         self.bot_name = bot_name        #do not remove this
-        self.win_threhold = win_threshold
         
         #Initialize rotation direction and state
         self.cur_direction = 1
@@ -42,6 +45,7 @@ class MyStrategy(GameBot):
         ##### IMPLEMENT AWESOME STRATEGY HERE ##################
         #print(round_number)
         #print(self.cur_state)
+        #print(hand)
         if (round_number > 0):
             self.calculate_state(prev_turn)
         
@@ -57,11 +61,12 @@ class MyStrategy(GameBot):
             opponent = 0
         
         if round_number >= 99:
-            if np.absolute(self.cur_state[team]) > 0.99:
-                #print("1")
+            #print(round_number)
+            #print(self.cur_state[team])
+            if np.absolute(self.cur_state[team]) > self.win_threshold:
                 return None
             
-            elif np.absolute(self.cur_state[opponent]) > 0.99:
+            elif np.absolute(self.cur_state[opponent]) > self.win_threshold:
                 #print("2")
                 if GameAction.PAULIX in hand:
                     self.num_cards -= 1
@@ -71,21 +76,28 @@ class MyStrategy(GameBot):
                     self.num_cards -= 1
                     return GameAction.HADAMARD
                 
-                if GameAction.PAULIZ in hand:
-                    self.num_cards -= 1
-                    return GameAction.PAULIZ
+                #if GameAction.PAULIZ in hand:
+                    #self.num_cards -= 1
+                    #return GameAction.PAULIZ
                 
+                
+                #if GameAction.REVERSE in hand:
+                    #self.num_cards -= 1
+                    #return GameAction.REVERSE
+                
+                
+            elif np.absolute(self.cur_state[team] - self.cur_state[opponent]) <= self.difference_threshold:
+                return None
+                
+            elif np.absolute(self.cur_state[team]) > np.absolute(self.cur_state[opponent]):
+                #print("3")
                 if GameAction.REVERSE in hand:
                     self.num_cards -= 1
                     return GameAction.REVERSE
+
+                return None
                 
-            elif np.absolute(self.cur_state[team]) >= 1 / np.sqrt(2):
-                #print("3")
-                if self.rotate(team) and GameAction.REVERSE in hand:
-                    self.num_cards -= 1
-                    return GameAction.REVERSE
-                
-            elif np.absolute(self.cur_state[opponent]) > 1 / np.sqrt(2): 
+            elif np.absolute(self.cur_state[opponent]) > np.absolute(self.cur_state[team]): 
                 #print("4")
                 #print(hand)
                 if GameAction.PAULIX in hand:
@@ -96,12 +108,13 @@ class MyStrategy(GameBot):
                     self.num_cards -= 1
                     return GameAction.HADAMARD
                 
-                if self.rotate(team) and GameAction.REVERSE in hand:
+                if GameAction.REVERSE in hand:
                     self.num_cards -= 1
                     return GameAction.REVERSE
+                
         else:
             #print(round_number)
-            if self.num_received < 20:
+            if self.num_received < 20 and len(hand) == 5:
                 if GameAction.MEASURE in hand:
                     self.num_cards -= 1
                     return GameAction.MEASURE
@@ -114,9 +127,9 @@ class MyStrategy(GameBot):
                     self.num_cards -= 1
                     return GameAction.REVERSE
                 
-                if GameAction.HADAMARD in hand:
-                    self.num_cards -= 1
-                    return GameAction.HADAMARD
+                #if GameAction.HADAMARD in hand:
+                    #self.num_cards -= 1
+                    #return GameAction.HADAMARD
         
         
         #######################################################
@@ -166,6 +179,7 @@ class MyStrategy(GameBot):
             self.cur_direction *= -1
         
         rotate = self.rotation_matrix(self.cur_direction*self.theta)
+        #print(self.cur_direction)
         #print(self.cur_state)
         self.cur_state = np.dot(rotate, self.cur_state)
         #print(self.cur_state)
@@ -228,4 +242,4 @@ class MyStrategy(GameBot):
         return np.array([[np.cos(theta / 2), -np.sin(theta / 2)], [np.sin(theta / 2), np.cos(theta / 2)]])
     
 
-                
+            
