@@ -81,22 +81,22 @@ class MyStrategy(GameBot):
                     #return GameAction.PAULIZ
                 
                 
-                #if GameAction.REVERSE in hand:
-                    #self.num_cards -= 1
-                    #return GameAction.REVERSE
+                if self.rotate(team) and GameAction.REVERSE in hand:
+                    self.num_cards -= 1
+                    return GameAction.REVERSE
                 
                 
             elif np.absolute(self.cur_state[team] - self.cur_state[opponent]) <= self.difference_threshold:
-                return None
+                 if self.rotate(team) and GameAction.REVERSE in hand:
+                    self.num_cards -= 1
+                    return GameAction.REVERSE
                 
             elif np.absolute(self.cur_state[team]) > np.absolute(self.cur_state[opponent]):
                 #print("3")
-                if GameAction.REVERSE in hand:
+                if self.rotate(team) and GameAction.REVERSE in hand:
                     self.num_cards -= 1
                     return GameAction.REVERSE
 
-                return None
-                
             elif np.absolute(self.cur_state[opponent]) > np.absolute(self.cur_state[team]): 
                 #print("4")
                 #print(hand)
@@ -108,7 +108,7 @@ class MyStrategy(GameBot):
                     self.num_cards -= 1
                     return GameAction.HADAMARD
                 
-                if GameAction.REVERSE in hand:
+                if self.rotate(team) and GameAction.REVERSE in hand:
                     self.num_cards -= 1
                     return GameAction.REVERSE
                 
@@ -242,4 +242,4 @@ class MyStrategy(GameBot):
         return np.array([[np.cos(theta / 2), -np.sin(theta / 2)], [np.sin(theta / 2), np.cos(theta / 2)]])
     
 
-            
+                
