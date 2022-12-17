@@ -84,7 +84,7 @@ class MyStrategy(GameBot):
 
             elif np.absolute(self.cur_state[opponent]) > self.win_threshold:
                 # print("2")
-                if GameAction.HADAMARD in hand:
+                if self.H_good(team) and GameAction.HADAMARD in hand:
                     self.num_cards -= 1
                     return GameAction.HADAMARD
 
@@ -118,7 +118,7 @@ class MyStrategy(GameBot):
                     self.num_cards -= 1
                     return GameAction.PAULIX
 
-                elif GameAction.HADAMARD in hand:
+                elif self.H_good(team) and GameAction.HADAMARD in hand:
                     self.num_cards -= 1
                     return GameAction.HADAMARD
 
@@ -150,12 +150,27 @@ class MyStrategy(GameBot):
                 # if GameAction.HADAMARD in hand:
                 # self.num_cards -= 1
                 # return GameAction.HADAMARD
+            
+            # if round_number >= 90:
+            #     if self.rotate(team) and GameAction.REVERSE in hand:
+            #         self.num_cards -= 1
+            #         self.play_interval_count = 0
+            #         return GameAction.REVERSE
+            #     elif self.Z_Good(team) and GameAction.PAULIZ in hand:
+            #         self.num_cards -= 1
+            #         self.play_interval_count = 0
+            #         return GameAction.PAULIZ
+
 
             if self.play_interval_count == 10: # play time
                 if self.rotate(team) and GameAction.REVERSE in hand:
                     self.num_cards -= 1
                     self.play_interval_count = 0
                     return GameAction.REVERSE
+                elif self.Z_Good(team) and GameAction.PAULIZ in hand:
+                    self.num_cards -= 1
+                    self.play_interval_count = 0
+                    return GameAction.PAULIZ
 
                 # use measure properly ?
                 else:
@@ -382,7 +397,7 @@ class MyStrategy(GameBot):
                         return True;
 
     #Check if using a Z-gate is useful
-    def Z_Good(self) -> bool:
+    def Z_Good(self, team) -> bool:
         temp_state = self.cur_state;
 
         self.cur_state = np.dot(Z, self.cur_state);
