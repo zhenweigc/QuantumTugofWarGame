@@ -161,7 +161,7 @@ class MyStrategy(GameBot):
             #         self.play_interval_count = 0
             #         return GameAction.PAULIZ
 
-
+            # if we get R and Z, then out
             if self.play_interval_count == 10: # play time
                 if self.rotate(team) and GameAction.REVERSE in hand:
                     self.num_cards -= 1
@@ -175,6 +175,50 @@ class MyStrategy(GameBot):
                 # use measure properly ?
                 else:
                     return None;
+
+            # if no R and Z, then play others
+            if self.num_received <= 15 and len(hand) == 5:
+
+                if np.absolute(self.cur_state[team]) > self.win_threshold:
+                    # print("1")
+                    return None
+
+                elif np.absolute(self.cur_state[opponent]) > self.win_threshold:
+                    # print("2")
+                    if self.H_good(team) and GameAction.HADAMARD in hand:
+                        self.num_cards -= 1
+                        return GameAction.HADAMARD
+
+                    # if GameAction.PAULIX in hand:
+                    #     self.num_cards -= 1
+                    #     return GameAction.PAULIX
+
+                    # last struggle
+                    # if self.rotate(team) and GameAction.REVERSE in hand:
+                    #     self.num_cards -= 1
+                    #     return GameAction.REVERSE
+
+                elif np.absolute(self.cur_state[opponent]) > np.absolute(self.cur_state[team]):
+                    # print("4")
+                    # print(hand)
+                    if GameAction.MEASURE in hand:
+                        self.num_cards -= 1
+                        return GameAction.MEASURE
+
+                    # elif GameAction.PAULIX in hand:
+                    #     self.num_cards -= 1
+                    #     return GameAction.PAULIX
+
+                    elif self.H_good(team) and GameAction.HADAMARD in hand:
+                        self.num_cards -= 1
+                        return GameAction.HADAMARD
+
+                    # elif self.rotate(team) and GameAction.REVERSE in hand:
+                    #     self.num_cards -= 1
+                    #     return GameAction.REVERSE
+
+                    else:
+                        return None
 
 
         #######################################################
