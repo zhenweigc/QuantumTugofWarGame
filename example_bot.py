@@ -124,7 +124,7 @@ class MyStrategy(GameBot):
         else:
             #print(round_number)
             if self.num_received < 20 and len(hand) == 5:
-                if GameAction.MEASURE in hand:
+                if GameAction.MEASURE in hand and hand.count(GameAction.MEASURE) >= 2:
                     self.num_cards -= 1
                     return GameAction.MEASURE
                 
