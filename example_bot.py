@@ -401,7 +401,7 @@ class MyStrategy(GameBot):
         temp_state = self.cur_state;
         Z = np.array([[1, 0], [0, -1]]);
         self.cur_state = np.dot(Z, self.cur_state);
-        res = self.rotate(self, team);
+        res = self.rotate(team);
         self.cur_state = temp_state;
         return res;
 
