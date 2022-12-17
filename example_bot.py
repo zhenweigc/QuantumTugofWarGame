@@ -46,7 +46,8 @@ class MyStrategy(GameBot):
         #print(round_number)
         #print(hand)
         self.calculate_state(round_number, team, prev_turn)
-
+        #Verifying if the calculation is correct.
+        print(f'By calculation, current state is {self.cur_state}.');
         #print(self.cur_state)
 
 
@@ -364,6 +365,17 @@ class MyStrategy(GameBot):
                         return False;
                     else:
                         return True;
+
+    #Check if using a Z-gate is useful
+    def Z_Good(self) -> bool:
+        temp_state = self.cur_state;
+
+        self.cur_state = np.dot(Z, self.cur_state);
+        res = rotate(self, team);
+        self.cur_state = temp_state;
+        return res;
+
+
 
     def rotation_matrix(self, theta) -> np.array:
         return np.array([[np.cos(theta / 2), -np.sin(theta / 2)], [np.sin(theta / 2), np.cos(theta / 2)]])
