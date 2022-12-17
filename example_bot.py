@@ -28,6 +28,9 @@ class MyStrategy(GameBot):
 
     difference_threshold = 0.1
 
+    # used for pre stage
+    play_interval_count = 0
+
     def __init__(self,bot_name):
         self.bot_name = bot_name        #do not remove this
 
@@ -43,11 +46,15 @@ class MyStrategy(GameBot):
 
 
         ##### IMPLEMENT AWESOME STRATEGY HERE ##################
-        #print(round_number)
-        #print(hand)
+
+        # print(round_number)
+        # print(hand)
+
         self.calculate_state(round_number, team, prev_turn)
 
-        #print(self.cur_state)
+        self.play_interval_count += 1
+
+        # print(self.cur_state)
 
 
         if len(hand) > self.num_cards:
@@ -60,19 +67,20 @@ class MyStrategy(GameBot):
         else:
             opponent = 0
 
+        # from round 99
         if round_number >= 99:
-            #print(round_number)
-            #print(self.cur_state[team])
-            #print("Team: ", team)
-            #print("Opponent: ", opponent)
-            #print("Opponent state: ", np.absolute(self.cur_state[opponent]))
-            #print(hand)
+            # print(round_number)
+            # print(self.cur_state[team])
+            # print("Team: ", team)
+            # print("Opponent: ", opponent)
+            # print("Opponent state: ", np.absolute(self.cur_state[opponent]))
+            # print(hand)
             if np.absolute(self.cur_state[team]) > self.win_threshold:
-                #print("1")
+                # print("1")
                 return None
 
             elif np.absolute(self.cur_state[opponent]) > self.win_threshold:
-                #print("2")
+                # print("2")
                 if GameAction.HADAMARD in hand:
                     self.num_cards -= 1
                     return GameAction.HADAMARD
@@ -81,69 +89,74 @@ class MyStrategy(GameBot):
                     self.num_cards -= 1
                     return GameAction.PAULIX
 
-                if GameAction.MEASURE in hand:
-                    self.num_cards -= 1
-                    return GameAction.MEASURE
+                # if GameAction.MEASURE in hand:
+                #     self.num_cards -= 1
+                #     return GameAction.MEASURE
 
+                # last struggle
                 if self.rotate(team) and GameAction.REVERSE in hand:
                     self.num_cards -= 1
                     return GameAction.REVERSE
 
 
-            elif np.absolute(np.absolute(self.cur_state[team])**2 - np.absolute(self.cur_state[opponent])**2) <= self.difference_threshold:
-                if self.rotate(team) and GameAction.REVERSE in hand:
-                    self.num_cards -= 1
-                    return GameAction.REVERSE
-
-            elif np.absolute(self.cur_state[team]) < np.absolute(self.cur_state[opponent]):
-                #print("3")
-                if self.rotate(team) and GameAction.REVERSE in hand:
-                    self.num_cards -= 1
-                    return GameAction.REVERSE
+            # elif np.absolute( np.absolute(self.cur_state[team])**2 - np.absolute(self.cur_state[opponent])**2 ) <= self.difference_threshold:
+            #     if self.rotate(team) and GameAction.REVERSE in hand:
+            #         self.num_cards -= 1
+            #         return GameAction.REVERSE
 
             elif np.absolute(self.cur_state[opponent]) > np.absolute(self.cur_state[team]):
-                #print("4")
-                #print(hand)
+                # print("4")
+                # print(hand)
                 if GameAction.MEASURE in hand:
                     self.num_cards -= 1
                     return GameAction.MEASURE
 
-                if GameAction.PAULIX in hand:
+                elif GameAction.PAULIX in hand:
                     self.num_cards -= 1
                     return GameAction.PAULIX
 
-                if GameAction.HADAMARD in hand:
+                elif GameAction.HADAMARD in hand:
                     self.num_cards -= 1
                     return GameAction.HADAMARD
 
+                elif self.rotate(team) and GameAction.REVERSE in hand:
+                    self.num_cards -= 1
+                    return GameAction.REVERSE
+
+                else:
+                    return None
+
+
+        # before round 99
+        else:
+            # print(round_number)
+            # if self.num_received < 20 and len(hand) == 5:
+            #     if GameAction.REVERSE in hand and self.rotate(team):
+            #         self.num_cards -= 1
+            #         return GameAction.REVERSE
+
+            #     if GameAction.PAULIZ in hand:
+            #         self.num_cards -= 1
+            #         return GameAction.PAULIZ
+
+            #     if GameAction.MEASURE in hand and hand.count(GameAction.MEASURE) >= 2:
+            #         self.num_cards -= 1
+            #         return GameAction.MEASURE
+
+            #     return None;
+                # if GameAction.HADAMARD in hand:
+                # self.num_cards -= 1
+                # return GameAction.HADAMARD
+
+            if self.play_interval_count == 10: # play time
                 if self.rotate(team) and GameAction.REVERSE in hand:
                     self.num_cards -= 1
+                    self.play_interval_count = 0
                     return GameAction.REVERSE
 
-        else:
-            #print(round_number)
-            if self.num_received < 20 and len(hand) == 5:
-                if GameAction.REVERSE in hand and self.rotate(team):
-                    self.num_cards -= 1
-                    return GameAction.REVERSE
-
-                if GameAction.PAULIZ in hand:
-                    self.num_cards -= 1
-                    return GameAction.PAULIZ
-
-                if GameAction.MEASURE in hand and hand.count(GameAction.MEASURE) >= 2:
-                    self.num_cards -= 1
-                    return GameAction.MEASURE
-
-                return None;
-                #if GameAction.HADAMARD in hand:
-                #self.num_cards -= 1
-                #return GameAction.HADAMARD
-            elif GameAction.REVERSE in hand and self.rotate(team):
-                self.num_cards -= 1
-                return GameAction.REVERSE
-            else:
-                return None;
+                # use measure properly ?
+                else:
+                    return None;
 
 
         #######################################################
