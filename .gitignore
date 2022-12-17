@@ -1,0 +1,5 @@
+
+.idea/modules.xml
+*.xml
+.idea/QuantumTugofWarGame.iml
+QTugofwar_cnn.ipynb
