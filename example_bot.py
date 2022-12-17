@@ -412,11 +412,20 @@ class MyStrategy(GameBot):
     #Check if using a Z-gate is useful
     def Z_Good(self, team) -> bool:
         temp_state = self.cur_state;
+        #Compute no action & after rotation state
+        tmp = rotation_matrix(self.cur_direction * self.theta);
+        aftermath = np.dot(tmp, temp_state);
+
+
         Z = np.array([[1, 0], [0, -1]]);
-        self.cur_state = np.dot(Z, self.cur_state);
-        res = self.rotate(team);
-        self.cur_state = temp_state;
-        return res;
+        temp_state = np.dot(Z, temp_state);
+        aftermath2 = np.dot(tmp, temp_state);
+
+        if np.absolute(aftermath[team]) < np.absolute(aftermath2[team]):
+            return True;
+        else:
+            return False;
+
 
     #Check if using a H-gate is useful
     def H_good(self, team) -> bool:
