@@ -301,7 +301,20 @@ class MyStrategy(GameBot):
                 self.cur_direction *= -1
 
 
-    def rotate(self, team):
+    def rotate(self, team) -> bool:
+        temp_state = self.cur_state;
+        tmp = rotation_matrix(self.cur_direction * self.theta);
+        aftermath = np.dot(tmp, self.cur_state);
+
+        tmp2 = rotation_matrix(-1 * self.cur_direction * self.theta);
+        aftermath2 = np.dot(tmp2, self.cur_state);
+
+        if np.absolute(aftermath[team]) < np.absolute(aftermath2[team]):
+            return True;
+        else:
+            return False;
+
+    def rotate2(self, team):
         if self.cur_state[0] > 0 and self.cur_state[1] > 0:
             if team == 0:
                 #Move to the direction of 0
