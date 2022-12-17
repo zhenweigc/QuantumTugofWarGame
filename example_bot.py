@@ -162,7 +162,7 @@ class MyStrategy(GameBot):
             #         return GameAction.PAULIZ
 
             # if we get R and Z, then out
-            if self.play_interval_count == 10: # play time
+            if self.play_interval_count >= 10: # play time
                 if self.rotate(team) and GameAction.REVERSE in hand:
                     self.num_cards -= 1
                     self.play_interval_count = 0
