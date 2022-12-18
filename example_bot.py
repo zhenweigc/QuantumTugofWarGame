@@ -31,8 +31,6 @@ class MyStrategy(GameBot):
     # used for pre stage
     play_interval_count = 0
 
-    # two_xs = 2
-
     def __init__(self,bot_name):
         self.bot_name = bot_name        #do not remove this
 
@@ -78,7 +76,7 @@ class MyStrategy(GameBot):
                     return GameAction.HADAMARD
 
         # before round 99
-        if round_number < 95:
+        if round_number < 99:
             if GameAction.MEASURE in hand:
                 self.num_cards -= 1
                 return GameAction.MEASURE
@@ -111,7 +109,7 @@ class MyStrategy(GameBot):
                             self.num_cards -= 1
                             self.play_interval_count = 0
                             return GameAction.PAULIZ
-                        elif card == GameAction.HADAMARD:
+                        elif (hand.count(GameAction.HADAMARD) == 1 and round_number <= 80) or (hand.count(GameAction.HADAMARD) >= 2):
                                 self.num_cards -= 1
                                 return GameAction.HADAMARD
 
@@ -157,7 +155,6 @@ class MyStrategy(GameBot):
             elif np.absolute(self.cur_state[opponent]) > np.absolute(self.cur_state[team]):
                 if GameAction.PAULIX in hand:
                     self.num_cards -= 1
-                    self.two_xs -= 1
                     return GameAction.PAULIX
                 if GameAction.HADAMARD in hand and self.H_good(team):
                     self.num_cards -= 1
