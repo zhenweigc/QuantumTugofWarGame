@@ -73,11 +73,63 @@ class MyStrategy(GameBot):
 
         if round_number == 0:
             if team == 0:
-                if GameAction.HADAMARD and self.H_good(team) in hand:
+                if GameAction.HADAMARD in hand and self.H_good(team):
                     self.num_cards -= 1
-                    return GameAction.MEASURE
+                    return GameAction.HADAMARD
 
-        # final: keep as much as 3 X: X X X H H
+        # before round 99
+        if round_number < 95:
+            # if we get R and Z, then out
+            if self.play_interval_count >= 20 or round_number >= 90: # play time
+                if self.rotate(team) and GameAction.REVERSE in hand:
+                    self.num_cards -= 1
+                    self.play_interval_count = 0
+                    return GameAction.REVERSE
+                elif self.Z_Good(team) and GameAction.PAULIZ in hand:
+                    self.num_cards -= 1
+                    self.play_interval_count = 0
+                    return GameAction.PAULIZ
+
+            # discard H cards
+            if self.num_received < 20 and len(hand) == 5:
+                if GameAction.HADAMARD in hand and self.H_good(team):
+                    self.num_cards -= 1
+                    return GameAction.HADAMARD
+
+                # for card in hand:
+                #     if card != GameAction.PAULIX and card != GameAction.MEASURE:
+                #         if card != GameAction.HADAMARD or self.H_good(team):
+                #             self.num_cards -= 1
+                #             return card
+
+            return None
+
+        # before final
+        if round_number >= 95 and round_number < 99:
+            if np.absolute(self.cur_state[opponent]) > self.win_threshold:
+                if hand.count(GameAction.PAULIX) >=4
+                    self.num_cards -= 1
+                    return GameAction.PAULIX
+                elif GameAction.HADAMARD in hand and self.H_good(team):
+                    self.num_cards -= 1
+                    return GameAction.HADAMARD
+
+            return None
+
+        # final: keep as much as 3 X: X X X H R
+        # if round_number == 99:
+        #     if np.absolute(self.cur_state[opponent]) < np.absolute(self.cur_state[team]):
+        #         if GameAction.MEASURE in hand:
+        #             self.num_cards -= 1
+        #             return GameAction.MEASURE
+        #         elif GameAction.PAULIX in hand:
+        #             self.num_cards -= 1
+        #             return GameAction.PAULIX
+        #     else:
+        #         if GameAction.PAULIX in hand:
+        #             self.num_cards -= 1
+        #             return GameAction.PAULIX
+
         if round_number >= 99:
             # print(round_number)
             # print(self.cur_state[team])
@@ -99,25 +151,12 @@ class MyStrategy(GameBot):
                     self.num_cards -= 1
                     return GameAction.PAULIZ
 
-            # if np.absolute(self.cur_state[opponent]) > 0.8:
-            #     if GameAction.PAULIX in hand:
-            #         self.num_cards -= 1
-            #         return GameAction.PAULIX
-            #     elif self.H_good(team) and GameAction.HADAMARD in hand:
-            #         self.num_cards -= 1
-            #         return GameAction.HADAMARD
-            #     return None
-
-                # if GameAction.MEASURE in hand:
-                #     self.num_cards -= 1
-                #     return GameAction.MEASURE
-
             if np.absolute(self.cur_state[opponent]) > np.absolute(self.cur_state[team]):
                 if GameAction.PAULIX in hand:
                     self.num_cards -= 1
                     return GameAction.PAULIX
 
-                elif GameAction.HADAMARD and self.H_good(team) in hand:
+                elif GameAction.HADAMARD in hand and self.H_good(team):
                     self.num_cards -= 1
                     return GameAction.HADAMARD
 
@@ -129,52 +168,7 @@ class MyStrategy(GameBot):
                     self.num_cards -= 1
                     return GameAction.PAULIZ
 
-                # elif self.rotate(team) and GameAction.REVERSE in hand:
-                #     self.num_cards -= 1
-                #     return GameAction.REVERSE
-
-            # elif np.absolute(self.cur_state[team]) - np.absolute(self.cur_state[opponent]) <= self.difference_threshold:
-            #      if self.rotate(team) and GameAction.REVERSE in hand:
-            #         self.num_cards -= 1
-            #         return GameAction.REVERSE
-
-            else:
-                return None
-
-        # before final
-        elif round_number >=95 and round_number <99:
-            if hand.count(GameAction.PAULIX) >=4 and np.absolute(self.cur_state[opponent]) > self.win_threshold:
-                self.num_cards -= 1
-                return GameAction.PAULIX
-
-            # if np.absolute(self.cur_state[opponent]) > self.win_threshold:
-            #     if self.H_good(team) and GameAction.HADAMARD in hand:
-            #         self.num_cards -= 1
-            #         return GameAction.HADAMARD
-            # return None
-
-        # before round 99
-        else:
-            # if we get R and Z, then out
-            if self.play_interval_count >= 20 or round_number >= 90: # play time
-                if self.rotate(team) and GameAction.REVERSE in hand:
-                    self.num_cards -= 1
-                    self.play_interval_count = 0
-                    return GameAction.REVERSE
-                elif self.Z_Good(team) and GameAction.PAULIZ in hand:
-                    self.num_cards -= 1
-                    self.play_interval_count = 0
-                    return GameAction.PAULIZ
-                else:
-                    return None;
-
-            # discard cards
-            if self.num_received < 20 and len(hand) == 5:
-                for card in hand:
-                    if card != GameAction.PAULIX and card != GameAction.MEASURE:
-                        if card != GameAction.HADAMARD or (card == GameAction.HADAMARD and self.H_good(team)):
-                            self.num_cards -= 1
-                            return card
+            return None
 
         #######################################################
         return None
