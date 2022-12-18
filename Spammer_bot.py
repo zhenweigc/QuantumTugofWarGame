@@ -46,19 +46,9 @@ class MyStrategy(GameBot):
 
 
         ##### IMPLEMENT AWESOME STRATEGY HERE ##################
-
-        # print(round_number)
-        # print(hand)
-
         self.calculate_state(round_number, team, prev_turn)
 
         self.play_interval_count += 1
-
-        # print(self.cur_state)
-        #Verifying if the calculation is correct.
-        #print(f'By calculation, current state is {self.cur_state}.');
-        #print(self.cur_state)
-
 
         if len(hand) > self.num_cards:
             self.num_received += len(hand) - self.num_cards
@@ -92,7 +82,7 @@ class MyStrategy(GameBot):
 
         else:
             # if we get R and Z, then out
-            if self.num_received <= 20 and len(hand) == 5:
+            if self.num_received <= 20:
                 for card in hand:
                     if card != GameAction.PAULIX:
                         return card
