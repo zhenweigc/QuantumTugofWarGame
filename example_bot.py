@@ -430,18 +430,10 @@ class MyStrategy(GameBot):
     #Check if using a H-gate is useful
     def H_good(self, team) -> bool:
         temp_state = self.cur_state;
-        temp_me = np.absolute(temp_state[team]);
         temp_rt = rotation_matrix(self.cur_direction * self.theta);
-        H = np.array([[np.sqrt(1/2), np.sqrt(1/2)], [np.sqrt(1/2), -np.sqrt(1/2)]])
-        temp_state = np.dot(temp_rt, np.dot(H, temp_state));
-
-        if (temp_me < np.absolute(temp_state[team])):
-            return True;
-        else:
-            return False;
-
-
         temp_me = np.absolute(np.dot(temp_rt, temp_state)[team]);
+
+        H = np.array([[np.sqrt(1/2), np.sqrt(1/2)], [np.sqrt(1/2), -np.sqrt(1/2)]])
         temp_state = np.dot(temp_rt, np.dot(H, temp_state));
 
         if (temp_me < np.absolute(temp_state[team])):
