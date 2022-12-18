@@ -89,12 +89,11 @@ class MyStrategy(GameBot):
                 return None
 
             if np.absolute(self.cur_state[team]) - np.absolute(self.cur_state[opponent]) <= self.difference_threshold:
-                 if self.rotate(team) and GameAction.REVERSE in hand:
+                if self.rotate(team) and GameAction.REVERSE in hand:
                     self.num_cards -= 1
                     return GameAction.REVERSE
                 elif self.Z_Good(team) and GameAction.PAULIZ in hand:
                     self.num_cards -= 1
-                    self.play_interval_count = 0
                     return GameAction.PAULIZ
 
             # if np.absolute(self.cur_state[opponent]) > 0.8:
@@ -131,7 +130,6 @@ class MyStrategy(GameBot):
 
                 elif self.Z_Good(team) and GameAction.PAULIZ in hand:
                     self.num_cards -= 1
-                    self.play_interval_count = 0
                     return GameAction.PAULIZ
 
                 # elif self.rotate(team) and GameAction.REVERSE in hand:
