@@ -107,7 +107,7 @@ class MyStrategy(GameBot):
         # before final
         if round_number >= 95 and round_number < 99:
             if np.absolute(self.cur_state[opponent]) > self.win_threshold:
-                if hand.count(GameAction.PAULIX) >=4
+                if hand.count(GameAction.PAULIX) >=4:
                     self.num_cards -= 1
                     return GameAction.PAULIX
                 elif GameAction.HADAMARD in hand and self.H_good(team):
