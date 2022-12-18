@@ -71,6 +71,12 @@ class MyStrategy(GameBot):
         else:
             opponent = 0
 
+        if round_number == 0:
+            if team == 0:
+                if GameAction.HADAMARD and self.H_good(team) in hand:
+                    self.num_cards -= 1
+                    return GameAction.MEASURE
+
         # final: keep as much as 3 X: X X X H H
         if round_number >= 99:
             # print(round_number)
@@ -111,7 +117,7 @@ class MyStrategy(GameBot):
                     self.num_cards -= 1
                     return GameAction.PAULIX
 
-                elif self.H_good(team) and GameAction.HADAMARD in hand:
+                elif GameAction.HADAMARD and self.H_good(team) in hand:
                     self.num_cards -= 1
                     return GameAction.HADAMARD
 
@@ -150,7 +156,7 @@ class MyStrategy(GameBot):
         # before round 99
         else:
             # if we get R and Z, then out
-            if self.play_interval_count >= 15 or round_number >= 90: # play time
+            if self.play_interval_count >= 20 or round_number >= 90: # play time
                 if self.rotate(team) and GameAction.REVERSE in hand:
                     self.num_cards -= 1
                     self.play_interval_count = 0
@@ -162,9 +168,10 @@ class MyStrategy(GameBot):
                 else:
                     return None;
 
+            # discard cards
             if self.num_received < 20 and len(hand) == 5:
                 for card in hand:
-                    if card != GameAction.PAULIX:
+                    if card != GameAction.PAULIX and card != GameAction.MEASURE:
                         if card != GameAction.HADAMARD or (card == GameAction.HADAMARD and self.H_good(team)):
                             self.num_cards -= 1
                             return card
@@ -440,7 +447,6 @@ class MyStrategy(GameBot):
             return True;
         else:
             return False;
-
 
     def rotation_matrix(self, theta) -> np.array:
         return np.array([[np.cos(theta / 2), -np.sin(theta / 2)], [np.sin(theta / 2), np.cos(theta / 2)]])
