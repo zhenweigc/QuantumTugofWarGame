@@ -9,31 +9,31 @@ When should it work well, and when should it have trouble?
 
 1) Why did you design this strategy?
 
-By analysising the game rules, we found out that different cards have different functionality,
+By analyzing the game rules, we figured out different functionality of different cards,
 and can make different effects on different playing stage.
-For example, the REVERSE card can reverse the \theta rotation direction of qubit,
-and PAULIZ card can also make the same effects by phasefliping the qubit.
-But the effect of these REVERSE and PAULIZ cards are kind of non-immediate.
-Because it takes to accumulate the effect of rotations.
+For example, the REVERSE card can reverse the $\theta$ rotation direction of qubit,
+and PAULIZ card can also make similar effect by phasefliping the qubit.
+But the effect of these REVERSE and PAULIZ cards are kind of non-immediate,
+as it takes turns to accumulate the effect of rotations.
 So, these REVERSE and PAULIZ cards are more suitable to play on the earlier stage (< 99 rounds).
 On the other hand, the HADAMARD and PAULIX cards can change the qubit state dramatically,
 so as to make a reversal to the situation that is going to lose.
-So the HADAMARD and PAULIX cards should be stored in hand and play in the final stage 
+So the HADAMARD and PAULIX cards should be stored in hand and play in the final stage
 (>= 99 rounds). We also follow the logic that PAULIX is more helpful than HADAMARD,
 so we will try to gather as many as PAULIX in hand for the final stage.
 The MEASURE card we found it is not that useful in our strategy, so we will play it
 out once we get a MEASURE card.
 
-To play the cards properly, we have some conditation checking function for each kind
+To play the cards properly, we have some conditional checking function for each kind
 of cards. For example, for REVERSE, we will check if the REVERSE card can make the
 rotation of qubit good for us. Moreover, we also have PAULIZ and HADAMARD conditation
 checking functions.
 
-These strategy makes us almost always win in the earlier stage (< 99 rounds),
-and this can save us a PAULIX card in the final stage, so as to enlarge the winning
+These strategy makes us almost always in a more preferable state for early stages (< 99 rounds),
+and this can save us a PAULIX card in the final stage, which enlarges the winning
 percentage of our team.
 
-For the final stage, we also check the conditation before paly cards. We only
+For the final stage, we also check conditions before play any cards. We only
 play PAULIX card if we are going to lose the game. This makes our storing PAULIX cards strategy
 more powerful, because we can take advantage of these PAULIX cards to win the game.
 We have the assumption that the other teams will also play PAULIX cards in the final
@@ -42,11 +42,12 @@ cards in hand than the opponents, then we will have more possibilities to win.
 
 2) When should it work well?
 
-Because we are using REVERSE and PAULIZ cards properly in the earlier stage, so when we
-accepts some REVERSE or PAULIZ cards and can use them when needed, then before
-round 99, we will have a much more larger winning percentage then the opponents.
-Since the REVERSE and PAULIZ takes ratively high possibilities, Z (27%) and R (21%).
-So this situation almost always happen.
+Because we are using REVERSE and PAULIZ cards properly in the earlier stage, so
+when we accepts some REVERSE or PAULIZ cards and can use them when needed, then
+before round 99, we will have a much more larger
+winning percentage then the opponents.
+Since the REVERSE and PAULIZ takes ratively high possibilities,
+Z (27%) and R (21%). So this situation almost always happen.
 
 For the final stage, when we stores a large amount of PAULIX cards, then we will
 win the game in high possibility.
@@ -56,14 +57,15 @@ win the game in high possibility.
 There is a unfavorable situation for our earlier stage playing strategy. If we
 turn the rotation direction in a favorable dirction to us too early, and we
 have already get 5 PAULIX cards, which means we will not again adjust our cards,
-then after the coefficient of our team reaches to 1.00, it will begin to decrease.
+then after the coefficient of our team reaches 1.00, it will begin to decrease.
 Then properly in the final stage, the situation is not good for us.
 To prevent this happen, we design a step accounter, and play REVERSE and
 PAULIZ cards intermittently. But this is not always work because the cards
 deliver is randomly.
 
 For the final stage, if we just can not receive PAULIX cards because the randomly
-deliver cards, then we probably will lose the game.
+deliver cards, then we probably will lose the game. But that's just out of luck
+and there is not much we can do.
 
 '''
 class MyStrategy(GameBot):
@@ -334,4 +336,3 @@ class MyStrategy(GameBot):
 
     def rotation_matrix(self, theta) -> np.array:
         return np.array([[np.cos(theta / 2), -np.sin(theta / 2)], [np.sin(theta / 2), np.cos(theta / 2)]])
-
