@@ -50,15 +50,16 @@ class MyStrategy(GameBot):
         # print(round_number)
         # print(hand)
 
-        self.calculate_state(round_number, team, prev_turn)
+
 
 
         self.play_interval_count += 1
-
+        self.calculate_state(round_number, team, prev_turn)
         # print(self.cur_state)
         #Verifying if the calculation is correct.
-        # print(f'By calculation, current state is {self.cur_state}, round number is {round_number}.');
+        print(f'By calculation, current state is {self.cur_state}, round number is {round_number}.');
         #print(self.cur_state)
+
 
 
         if len(hand) > self.num_cards:
@@ -194,9 +195,77 @@ class MyStrategy(GameBot):
         return None
 
     def calculate_state(self, round_number, team, prev_turn):
+        '''
+        if (round_number == 0):
+            return;
+        '''
+        print(f'Round number is {round_number}');
         action_1 = prev_turn['team0_action']
         action_2 = prev_turn['team1_action']
 
+        #Apply previous actions for team 0
+        if action_1 == GameAction.MEASURE:
+            #print("1")
+            self.cur_state = prev_turn['team0_measurement']
+
+        elif action_1 == GameAction.PAULIX:
+            #print("2")
+            X = np.array([[0, 1], [1, 0]])
+            self.cur_state = np.dot(X, self.cur_state)
+
+        elif action_1 == GameAction.PAULIZ:
+            #print("3")
+            Z = np.array([[1, 0], [0, -1]])
+            self.cur_state = np.dot(Z, self.cur_state)
+
+        elif action_1 == GameAction.HADAMARD:
+            #print("4")
+            H = np.array([[np.sqrt(1/2), np.sqrt(1/2)], [np.sqrt(1/2), -np.sqrt(1/2)]])
+            self.cur_state = np.dot(H, self.cur_state)
+
+        elif action_1 == GameAction.REVERSE:
+            #print("5")
+            self.cur_direction *= -1
+        else:
+            print("Team 0 did Nothing");
+
+
+        #Apply previous actions for team 1
+        if action_2 == GameAction.MEASURE:
+            #print("1")
+            self.cur_state = prev_turn['team1_measurement']
+
+        elif action_2 == GameAction.PAULIX:
+            #print("2")
+            X = np.array([[0, 1], [1, 0]])
+            self.cur_state = np.dot(X, self.cur_state)
+
+        elif action_2 == GameAction.PAULIZ:
+            #print("3")
+            Z = np.array([[1, 0], [0, -1]])
+            self.cur_state = np.dot(Z, self.cur_state)
+
+        elif action_2 == GameAction.HADAMARD:
+            #print("4")
+            H = np.array([[np.sqrt(1/2), np.sqrt(1/2)], [np.sqrt(1/2), -np.sqrt(1/2)]])
+            self.cur_state = np.dot(H, self.cur_state)
+
+        elif action_2 == GameAction.REVERSE:
+            #print("5")
+            self.cur_direction *= -1
+        else:
+            print("Team 1 did Nothing");
+
+
+        #Rotate
+        if (round_number != 0):
+            rotate = self.rotation_matrix(self.cur_direction * self.theta)
+            #print(self.cur_direction)
+            #print(self.cur_state)
+            self.cur_state = np.dot(rotate, self.cur_state)
+            #print(self.cur_state)
+        return;
+        '''
         if (team == 0):
             #Apply previous actions for team 0
             if action_1 == GameAction.MEASURE:
@@ -249,12 +318,13 @@ class MyStrategy(GameBot):
 
 
             #Rotate
-            if (round_number > 0):
-                rotate = self.rotation_matrix(self.cur_direction*self.theta)
+
+            rotate = self.rotation_matrix(self.cur_direction*self.theta)
                 #print(self.cur_direction)
                 #print(self.cur_state)
-                self.cur_state = np.dot(rotate, self.cur_state)
+            self.cur_state = np.dot(rotate, self.cur_state)
                 #print(self.cur_state)
+            return;
         else:
             #Apply previous action from team 1
             if action_2 == GameAction.MEASURE:
@@ -280,13 +350,7 @@ class MyStrategy(GameBot):
                 #print("5")
                 self.cur_direction *= -1
 
-            #Rotate
-            if (round_number > 0):
-                rotate = self.rotation_matrix(self.cur_direction*self.theta)
-                #print(self.cur_direction)
-                #print(self.cur_state)
-                self.cur_state = np.dot(rotate, self.cur_state)
-                #print(self.cur_state)
+
 
             #print(self.cur_state)
             #Apply previous action from team 0
@@ -313,6 +377,14 @@ class MyStrategy(GameBot):
                 #print("5")
                 self.cur_direction *= -1
 
+            #Rotate
+            rotate = self.rotation_matrix(self.cur_direction*self.theta)
+            #print(self.cur_direction)
+            #print(self.cur_state)
+            self.cur_state = np.dot(rotate, self.cur_state)
+            #print(self.cur_state)
+            return;
+        '''
 
     def rotate(self, team) -> bool:
         # if np.absolute(self.cur_state[team]) >= self.win_threshold and hand.count(GameAction.REVERSE) < 2:
@@ -331,100 +403,6 @@ class MyStrategy(GameBot):
         else:
             return False;
 
-    def rotate2(self, team):
-        if self.cur_state[0] > 0 and self.cur_state[1] > 0:
-            if team == 0:
-                #Move to the direction of 0
-                if self.cur_direction == 1:
-                    return False
-                else:
-                    #Actuall, we got to make sure we don't over-rotate.
-                    tmp = self.rotation_matrix(self.cur_direction * self.theta);
-                    aftermath = np.dot(tmp, self.cur_state);
-                    if np.absolute(aftermath[team]) < np.absolute(self.cur_state[team]):
-                        return False;
-                    else:
-                        return True;
-            else:
-                #Move to the direction of 1
-                if self.cur_direction == 1:
-                    tmp = self.rotation_matrix(self.cur_direction * self.theta);
-                    aftermath = np.dot(tmp, self.cur_state);
-                    if np.absolute(aftermath[team]) < np.absolute(self.cur_state[team]):
-                        return False;
-                    else:
-                        return True;
-                else:
-                    return False
-        if self.cur_state[0] < 0 and self.cur_state[1] > 0:
-            if team == 0:
-                #Move to the direction of 0
-                if self.cur_direction == 1:
-                    tmp = self.rotation_matrix(self.cur_direction * self.theta);
-                    aftermath = np.dot(tmp, self.cur_state);
-                    if np.absolute(aftermath[team]) < np.absolute(self.cur_state[team]):
-                        return False;
-                    else:
-                        return True;
-                else:
-                    return False
-            else:
-                #Move to the direction of 1
-                if self.cur_direction == 1:
-                    return False
-                else:
-                    tmp = self.rotation_matrix(self.cur_direction * self.theta);
-                    aftermath = np.dot(tmp, self.cur_state);
-                    if np.absolute(aftermath[team]) < np.absolute(self.cur_state[team]):
-                        return False;
-                    else:
-                        return True;
-        if self.cur_state[0] < 0 and self.cur_state[1] < 0:
-            if team == 0:
-                #Move to the direction of 0
-                if self.cur_direction == 1:
-                    return False
-                else:
-                    tmp = self.rotation_matrix(self.cur_direction * self.theta);
-                    aftermath = np.dot(tmp, self.cur_state);
-                    if np.absolute(aftermath[team]) < np.absolute(self.cur_state[team]):
-                        return False;
-                    else:
-                        return True;
-            else:
-                #Move to the direction of 1
-                if self.cur_direction == 1:
-                    tmp = self.rotation_matrix(self.cur_direction * self.theta);
-                    aftermath = np.dot(tmp, self.cur_state);
-                    if np.absolute(aftermath[team]) < np.absolute(self.cur_state[team]):
-                        return False;
-                    else:
-                        return True;
-                else:
-                    return False
-        if self.cur_state[0] > 0 and self.cur_state[1] < 0:
-            if team == 0:
-                #Move to the direction of 0
-                if self.cur_direction == 1:
-                    tmp = self.rotation_matrix(self.cur_direction * self.theta);
-                    aftermath = np.dot(tmp, self.cur_state);
-                    if np.absolute(aftermath[team]) < np.absolute(self.cur_state[team]):
-                        return False;
-                    else:
-                        return True;
-                else:
-                    return False
-            else:
-                #Move to the direction of 1
-                if self.cur_direction == 1:
-                    return False
-                else:
-                    tmp = self.rotation_matrix(self.cur_direction * self.theta);
-                    aftermath = np.dot(tmp, self.cur_state);
-                    if np.absolute(aftermath[team]) < np.absolute(self.cur_state[team]):
-                        return False;
-                    else:
-                        return True;
 
     #Check if using a Z-gate is useful
 
@@ -464,3 +442,4 @@ class MyStrategy(GameBot):
 
     def rotation_matrix(self, theta) -> np.array:
         return np.array([[np.cos(theta / 2), -np.sin(theta / 2)], [np.sin(theta / 2), np.cos(theta / 2)]])
+
