@@ -155,7 +155,7 @@ class MyStrategy(GameBot):
                 return None
 
             elif np.absolute(self.cur_state[opponent]) > np.absolute(self.cur_state[team]):
-                if GameAction.PAULIX in hand > 0:
+                if GameAction.PAULIX in hand:
                     self.num_cards -= 1
                     self.two_xs -= 1
                     return GameAction.PAULIX
@@ -205,7 +205,7 @@ class MyStrategy(GameBot):
         if (round_number == 0):
             return;
         '''
-        print(f'Round number is {round_number}');
+        # print(f'Round number is {round_number}');
         action_1 = prev_turn['team0_action']
         action_2 = prev_turn['team1_action']
 
