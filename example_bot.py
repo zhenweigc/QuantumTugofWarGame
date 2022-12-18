@@ -79,7 +79,7 @@ class MyStrategy(GameBot):
                 return GameAction.MEASURE
 
             # if we get R and Z, then out
-            if self.play_interval_count >= 10 or round_number >= 90: # play time
+            if self.play_interval_count >= 12 or round_number >= 90: # play time
                 if self.rotate(team) and GameAction.REVERSE in hand:
                     self.num_cards -= 1
                     self.play_interval_count = 0
@@ -96,7 +96,7 @@ class MyStrategy(GameBot):
                     return GameAction.HADAMARD
 
                 # make sure at lease 4 X cards
-                if hand.count(GameAction.PAULIX) <= 5:
+                if hand.count(GameAction.PAULIX) <= 4:
                     for card in hand:
                         if GameAction.REVERSE in hand:
                             self.num_cards -= 1
