@@ -162,7 +162,7 @@ class MyStrategy(GameBot):
                 else:
                     return None;
 
-            if self.num_received <= 18 and len(hand) == 5:
+            if self.num_received < 20 and len(hand) == 5:
                 for card in hand:
                     if card != GameAction.PAULIX:
                         if card != GameAction.HADAMARD or (card == GameAction.HADAMARD and self.H_good(team)):
