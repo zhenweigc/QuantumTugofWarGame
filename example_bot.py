@@ -50,15 +50,16 @@ class MyStrategy(GameBot):
         # print(round_number)
         # print(hand)
 
-        self.calculate_state(round_number, team, prev_turn)
+
 
 
         self.play_interval_count += 1
-
+        self.calculate_state(round_number, team, prev_turn)
         # print(self.cur_state)
         #Verifying if the calculation is correct.
         print(f'By calculation, current state is {self.cur_state}, round number is {round_number}.');
         #print(self.cur_state)
+
 
 
         if len(hand) > self.num_cards:
@@ -174,9 +175,11 @@ class MyStrategy(GameBot):
         return None
 
     def calculate_state(self, round_number, team, prev_turn):
+        '''
         if (round_number == 0):
             return;
-
+        '''
+        print(f'Round number is {round_number}');
         action_1 = prev_turn['team0_action']
         action_2 = prev_turn['team1_action']
 
@@ -203,6 +206,8 @@ class MyStrategy(GameBot):
         elif action_1 == GameAction.REVERSE:
             #print("5")
             self.cur_direction *= -1
+        else:
+            print("Team 0 did Nothing");
 
 
         #Apply previous actions for team 1
@@ -228,19 +233,20 @@ class MyStrategy(GameBot):
         elif action_2 == GameAction.REVERSE:
             #print("5")
             self.cur_direction *= -1
+        else:
+            print("Team 1 did Nothing");
 
 
         #Rotate
-        if (round_number > 0):
-            rotate = self.rotation_matrix(self.cur_direction*self.theta)
+        if (round_number != 0):
+            rotate = self.rotation_matrix(self.cur_direction * self.theta)
             #print(self.cur_direction)
             #print(self.cur_state)
             self.cur_state = np.dot(rotate, self.cur_state)
             #print(self.cur_state)
         return;
-
-    '''
-        if (True):
+        '''
+        if (team == 0):
             #Apply previous actions for team 0
             if action_1 == GameAction.MEASURE:
                 #print("1")
@@ -292,11 +298,11 @@ class MyStrategy(GameBot):
 
 
             #Rotate
-            if (round_number > 0):
-                rotate = self.rotation_matrix(self.cur_direction*self.theta)
+
+            rotate = self.rotation_matrix(self.cur_direction*self.theta)
                 #print(self.cur_direction)
                 #print(self.cur_state)
-                self.cur_state = np.dot(rotate, self.cur_state)
+            self.cur_state = np.dot(rotate, self.cur_state)
                 #print(self.cur_state)
             return;
         else:
@@ -352,14 +358,13 @@ class MyStrategy(GameBot):
                 self.cur_direction *= -1
 
             #Rotate
-            if (round_number > 0):
-                rotate = self.rotation_matrix(self.cur_direction*self.theta)
-                #print(self.cur_direction)
-                #print(self.cur_state)
-                self.cur_state = np.dot(rotate, self.cur_state)
-                #print(self.cur_state)
+            rotate = self.rotation_matrix(self.cur_direction*self.theta)
+            #print(self.cur_direction)
+            #print(self.cur_state)
+            self.cur_state = np.dot(rotate, self.cur_state)
+            #print(self.cur_state)
             return;
-    '''
+        '''
 
     def rotate(self, team) -> bool:
         # if np.absolute(self.cur_state[team]) >= self.win_threshold and hand.count(GameAction.REVERSE) < 2:
