@@ -52,6 +52,7 @@ class MyStrategy(GameBot):
 
         self.calculate_state(round_number, team, prev_turn)
 
+
         self.play_interval_count += 1
 
         # print(self.cur_state)
@@ -485,6 +486,7 @@ class MyStrategy(GameBot):
                         return True;
 
     #Check if using a Z-gate is useful
+
     def Z_Good(self, team) -> bool:
         # if np.absolute(self.cur_state[team]) >= self.win_threshold:
         #     return False
@@ -518,6 +520,7 @@ class MyStrategy(GameBot):
         else:
             return False;
 
+
         temp_me = np.absolute(np.dot(temp_rt, temp_state)[team]);
         temp_state = np.dot(temp_rt, np.dot(H, temp_state));
 
@@ -525,6 +528,7 @@ class MyStrategy(GameBot):
             return True;
         else:
             return False;
+
 
     def rotation_matrix(self, theta) -> np.array:
         return np.array([[np.cos(theta / 2), -np.sin(theta / 2)], [np.sin(theta / 2), np.cos(theta / 2)]])
