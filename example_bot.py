@@ -31,6 +31,8 @@ class MyStrategy(GameBot):
     # used for pre stage
     play_interval_count = 0
 
+    # two_xs = 2
+
     def __init__(self,bot_name):
         self.bot_name = bot_name        #do not remove this
 
@@ -77,8 +79,12 @@ class MyStrategy(GameBot):
 
         # before round 99
         if round_number < 95:
+            if GameAction.MEASURE in hand:
+                self.num_cards -= 1
+                return GameAction.MEASURE
+
             # if we get R and Z, then out
-            if self.play_interval_count >= 20 or round_number >= 90: # play time
+            if self.play_interval_count >= 10 or round_number >= 90: # play time
                 if self.rotate(team) and GameAction.REVERSE in hand:
                     self.num_cards -= 1
                     self.play_interval_count = 0
@@ -95,29 +101,30 @@ class MyStrategy(GameBot):
                     return GameAction.HADAMARD
 
                 # make sure at lease 3 X cards, and no more than 1 MEASURE
-                if hand.count(GameAction.PAULIX) < 3:
-                    if hand.count(GameAction.MEASURE) >= 2:
-                        self.num_cards -= 1
-                        return GameAction.MEASURE
-
+                if hand.count(GameAction.PAULIX) <= 4:
                     for card in hand:
-                        if card != GameAction.PAULIX and card != GameAction.MEASURE:
+                        if GameAction.REVERSE in hand:
+                            self.num_cards -= 1
+                            self.play_interval_count = 0
+                            return GameAction.REVERSE
+                        elif GameAction.PAULIZ in hand:
+                            self.num_cards -= 1
+                            self.play_interval_count = 0
+                            return GameAction.PAULIZ
+                        elif card == GameAction.HADAMARD:
                                 self.num_cards -= 1
-                                return card
+                                return GameAction.HADAMARD
 
             return None
 
         # before final
-        if round_number >= 95 and round_number < 99:
-            if np.absolute(self.cur_state[opponent]) > self.win_threshold:
-                if GameAction.HADAMARD in hand and self.H_good(team):
-                    self.num_cards -= 1
-                    return GameAction.HADAMARD
-                elif hand.count(GameAction.PAULIX) >=4:
-                    self.num_cards -= 1
-                    return GameAction.PAULIX
+        # if round_number >= 95 and round_number < 99:
+        #     if np.absolute(self.cur_state[opponent]) > self.win_threshold:
+        #         if GameAction.HADAMARD in hand and self.H_good(team):
+        #             self.num_cards -= 1
+        #             return GameAction.HADAMARD
 
-            return None
+        #     return None
 
         # final: keep as much as 3 X: X X X H R
         # if round_number == 99:
@@ -142,20 +149,25 @@ class MyStrategy(GameBot):
             # print("Opponent state: ", self.cur_state[opponent])
             # print(hand)
 
-            # can not believe a team has more than 3 X cards
-            if GameAction.PAULIX in hand and round_number <= 101:
-                self.num_cards -= 1
-                return GameAction.PAULIX
+            # let us play two Xs: round_number 101
+            if np.absolute(self.cur_state[team]) > self.win_threshold:
+                #print("1")
+                return None
 
-            # if np.absolute(self.cur_state[team]) > self.win_threshold:
-            if GameAction.MEASURE in hand and np.absolute(self.cur_state[team]) > self.win_threshold:
-                self.num_cards -= 1
-                return GameAction.MEASURE
-            # return None
+            elif np.absolute(self.cur_state[opponent]) > np.absolute(self.cur_state[team]):
+                if GameAction.PAULIX in hand > 0:
+                    self.num_cards -= 1
+                    self.two_xs -= 1
+                    return GameAction.PAULIX
+                if GameAction.HADAMARD in hand and self.H_good(team):
+                    self.num_cards -= 1
+                    return GameAction.HADAMARD
 
-            if GameAction.HADAMARD in hand and self.H_good(team):
-                self.num_cards -= 1
-                return GameAction.HADAMARD
+                # if np.absolute(self.cur_state[team]) > self.win_threshold:
+                # if GameAction.MEASURE in hand and np.absolute(self.cur_state[team]) > self.win_threshold:
+                #     self.num_cards -= 1
+                #     return GameAction.MEASURE
+                # return None
 
             # if np.absolute(self.cur_state[team]) - np.absolute(self.cur_state[opponent]) <= self.difference_threshold:
             if GameAction.REVERSE in hand and self.rotate(team):
@@ -165,6 +177,10 @@ class MyStrategy(GameBot):
             if GameAction.PAULIZ in hand and self.Z_Good(team):
                 self.num_cards -= 1
                 return GameAction.PAULIZ
+
+            if GameAction.MEASURE in hand:
+                self.num_cards -= 1
+                return GameAction.MEASURE
 
             # if np.absolute(self.cur_state[opponent]) > np.absolute(self.cur_state[team]):
             # if GameAction.PAULIX in hand:
