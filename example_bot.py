@@ -46,8 +46,7 @@ cards in hand than the opponents, then we will have more possibilities to win.
 
 Because we are using REVERSE and PAULIZ cards properly in the earlier stage, so
 when we accepts some REVERSE or PAULIZ cards and can use them when needed, then
-before round 99, we will have a much more larger
-winning percentage then the opponents.
+before round 99, we will have a much more larger winning percentage then the opponents.
 Since the REVERSE and PAULIZ takes ratively high possibilities,
 Z (27%) and R (21%). So this situation almost always happen.
 
@@ -173,7 +172,7 @@ class MyStrategy(GameBot):
                 return None
 
             elif np.absolute(self.cur_state[opponent]) > np.absolute(self.cur_state[team]):
-                if GameAction.PAULIX in hand:
+                if GameAction.PAULIX in hand and X_good(team, 0):
                     self.num_cards -= 1
                     return GameAction.PAULIX
                 if GameAction.HADAMARD in hand and self.H_good(team):
