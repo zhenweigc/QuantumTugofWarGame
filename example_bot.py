@@ -27,7 +27,9 @@ out once we get a MEASURE card.
 To play the cards properly, we have some conditional checking function for each kind
 of cards. For example, for REVERSE, we will check if the REVERSE card can make the
 rotation of qubit good for us. Moreover, we also have PAULIZ and HADAMARD conditation
-checking functions.
+checking functions. Z_Good() and H_good() function will compute the aftermath of
+applying such gates, and compare the result with not applying these gates. If chance
+of winning increments, then we will use the corresponding card here.
 
 These strategy makes us almost always in a more preferable state for early stages (< 99 rounds),
 and this can save us a PAULIX card in the final stage, which enlarges the winning
