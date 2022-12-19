@@ -9,6 +9,14 @@ When should it work well, and when should it have trouble?
 
 1) Why did you design this strategy?
 
+We first noticed that we need to record the current states of the qubit. After analyzing
+the game play file, we realized that the state update should be different for team 0 and team 1.
+For team 0, the previous actions include team 0's action in the previous round and team 1's action
+in the previous round. The current state should be updated by these two operations followed by a rotation.
+For team 1, the previous actions include team 1's action in the previous round and team 0's action in the
+current round. Therefore, the current state shoud be updated by actions in the order of team 1'action,
+a rotation, and team 0's action.
+
 By analyzing the game rules, we figured out different functionality of different cards,
 and can make different effects on different playing stage.
 For example, the REVERSE card can reverse the $\theta$ rotation direction of qubit,
@@ -35,20 +43,21 @@ These strategy makes us almost always in a more preferable state for early stage
 and this can save us a PAULIX card in the final stage, which enlarges the winning
 percentage of our team.
 
-For the final stage, we also check conditions before play any cards. We only
-play PAULIX card if we are going to lose the game. This makes our storing PAULIX cards strategy
-more powerful, because we can take advantage of these PAULIX cards to win the game.
+For the final stage, we want to play the strongest card because we do not know how many rounds there
+will be after the current round. we also check conditions before play any cards. We only
+play the better effect PAULIX card or HADAMARD card if we are going to lose the game.
+This makes our storing PAULIX cards strategy more powerful, because we can take advantage of 
+these strongest cards to win the game.
 We have the assumption that the other teams will also play PAULIX cards in the final
-stage if it seems the situation is not good for them. So if we have more PAULIX
+stage if it seems the situation is not good for them. So if we have more PAULIX and HADAMARD
 cards in hand than the opponents, then we will have more possibilities to win.
 
 2) When should it work well?
 
 Because we are using REVERSE and PAULIZ cards properly in the earlier stage, so
 when we accepts some REVERSE or PAULIZ cards and can use them when needed, then
-before round 99, we will have a much more larger
-winning percentage then the opponents.
-Since the REVERSE and PAULIZ takes ratively high possibilities,
+before round 99, we will have a much more larger winning percentage then the opponents.
+Since the REVERSE and PAULIZ takes relatively high possibilities,
 Z (27%) and R (21%). So this situation almost always happen.
 
 For the final stage, when we stores a sufficient amount of PAULIX cards, then we will
@@ -57,7 +66,7 @@ win the game in high possibility.
 3) When should it have trouble?
 
 There is a unfavorable situation for our earlier stage playing strategy. If we
-turn the rotation direction in a favorable dirction to us too early, and we
+turn the rotation direction in a favorable direction to us too early, and we
 have already get 5 PAULIX cards, which means we will not again adjust our cards,
 then after the coefficient of our team reaches 1.00, it will begin to decrease.
 Then properly in the final stage, the situation is not good for us.
@@ -173,7 +182,14 @@ class MyStrategy(GameBot):
                 return None
 
             elif np.absolute(self.cur_state[opponent]) > np.absolute(self.cur_state[team]):
-                if GameAction.PAULIX in hand:
+                if GameAction.PAULIX in hand and self.X_good(team, 0) and GameAction.HADAMARD in hand and self.H_good(team):
+                    self.num_cards -= 1
+                    if self.X_better_than_H(team, 0.01):
+                        return GameAction.PAULIX
+                    else:
+                        return GameAction.HADAMARD
+
+                if GameAction.PAULIX in hand and self.X_good(team, 0):
                     self.num_cards -= 1
                     return GameAction.PAULIX
                 if GameAction.HADAMARD in hand and self.H_good(team):
@@ -343,6 +359,51 @@ class MyStrategy(GameBot):
             return True;
         else:
             return False;
+
+    '''
+    Return if using a X gate here is worth it
+    diff is a threshold.
+    '''
+    def X_good(self, team, diff) -> bool:
+        temp_state = self.cur_state;
+        temp_rt = rotation_matrix(self.cur_direction * self.theta);
+        #If not applying X gate here.
+        temp_me = np.absolute(np.dot(temp_rt, temp_state)[team]);
+        #if (temp_me >= 1 - np.absolute(diff)):
+        #    return False;
+
+        X = np.array([[0, 1], [1, 0]]);
+        temp_state = np.dot(temp_rt, np.dot(X, temp_state));
+        temp_after = np.absolute(temp_state[team]);
+        if (temp_me**2 + np.absolute(diff) < temp_after**2):
+            return True;
+        else:
+            return False;
+
+    '''
+    Check if using X gate is better than using H gate
+
+    Caution: This function does not check if using X/H is a good idea comparing
+    to not using any of them.
+    '''
+    def X_better_than_H(self, team, diff) -> bool:
+         temp_state = self.cur_state;
+         temp_rt = rotation_matrix(self.cur_direction * self.theta);
+         #temp_me = np.absolute(np.dot(temp_rt, temp_state)[team]);
+
+         X = np.array([[0, 1], [1, 0]]);
+         H = np.array([[np.sqrt(1/2), np.sqrt(1/2)], [np.sqrt(1/2), -np.sqrt(1/2)]]);
+
+         temp_state_X = np.dot(temp_rt, np.dot(X, temp_state));
+         temp_state_H = np.dot(temp_rt, np.dot(H, temp_state));
+
+         temp_after_X = np.absolute(temp_state_X[team]);
+         temp_after_H = np.absolute(temp_state_H[team]);
+
+         if temp_after_H**2 + np.absolute(diff) < temp_after_X**2:
+             return True;
+         else:
+             return False;
 
     def rotation_matrix(self, theta) -> np.array:
         return np.array([[np.cos(theta / 2), -np.sin(theta / 2)], [np.sin(theta / 2), np.cos(theta / 2)]])
