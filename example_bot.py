@@ -363,5 +363,30 @@ class MyStrategy(GameBot):
         else:
             return False;
 
+    '''
+    Check if using X gate is better than using H gate
+
+    Caution: This function does not check if using X/H is a good idea comparing
+    to not using any of them.
+    '''
+    def X_better_than_H(self, team, diff) -> bool:
+         temp_state = self.cur_state;
+         temp_rt = rotation_matrix(self.cur_direction * self.theta);
+         #temp_me = np.absolute(np.dot(temp_rt, temp_state)[team]);
+
+         X = np.array([[0, 1], [1, 0]]);
+         H = np.array([[np.sqrt(1/2), np.sqrt(1/2)], [np.sqrt(1/2), -np.sqrt(1/2)]]);
+
+         temp_state_X = np.dot(temp_rt, np.dot(X, temp_state));
+         temp_state_H = np.dot(temp_rt, np.dot(H, temp_state));
+
+         temp_after_X = np.absolute(temp_state_X[team]);
+         temp_after_H = np.absolute(temp_state_H[team]);
+
+         if temp_after_H + np.absolute(diff) < temp_after_X:
+             return True;
+         else:
+             return False;
+
     def rotation_matrix(self, theta) -> np.array:
         return np.array([[np.cos(theta / 2), -np.sin(theta / 2)], [np.sin(theta / 2), np.cos(theta / 2)]])
