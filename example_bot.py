@@ -51,7 +51,7 @@ winning percentage then the opponents.
 Since the REVERSE and PAULIZ takes ratively high possibilities,
 Z (27%) and R (21%). So this situation almost always happen.
 
-For the final stage, when we stores a large amount of PAULIX cards, then we will
+For the final stage, when we stores a sufficient amount of PAULIX cards, then we will
 win the game in high possibility.
 
 3) When should it have trouble?
