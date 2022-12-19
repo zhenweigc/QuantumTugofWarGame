@@ -13,8 +13,8 @@ We first noticed that we need to record the current states of the qubit. After a
 the game play file, we realized that the state update should be different for team 0 and team 1.
 For team 0, the previous actions include team 0's action in the previous round and team 1's action
 in the previous round. The current state should be updated by these two operations followed by a rotation.
-For team 1, the previous actions include team 1's action in the previous round and team 0's action in the 
-current round. Therefore, the current state shoud be updated by actions in the order of team 1'action, 
+For team 1, the previous actions include team 1's action in the previous round and team 0's action in the
+current round. Therefore, the current state shoud be updated by actions in the order of team 1'action,
 a rotation, and team 0's action.
 
 By analyzing the game rules, we figured out different functionality of different cards,
@@ -398,7 +398,7 @@ class MyStrategy(GameBot):
          temp_after_X = np.absolute(temp_state_X[team]);
          temp_after_H = np.absolute(temp_state_H[team]);
 
-         if temp_after_H + np.absolute(diff) < temp_after_X:
+         if temp_after_H**2 + np.absolute(diff) < temp_after_X**2:
              return True;
          else:
              return False;
