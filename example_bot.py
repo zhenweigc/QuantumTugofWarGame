@@ -172,7 +172,7 @@ class MyStrategy(GameBot):
                 return None
 
             elif np.absolute(self.cur_state[opponent]) > np.absolute(self.cur_state[team]):
-                if GameAction.PAULIX in hand and X_good(team, 0):
+                if GameAction.PAULIX in hand and self.X_good(team, 0):
                     self.num_cards -= 1
                     return GameAction.PAULIX
                 if GameAction.HADAMARD in hand and self.H_good(team):
