@@ -9,6 +9,14 @@ When should it work well, and when should it have trouble?
 
 1) Why did you design this strategy?
 
+We first noticed that we need to record the current states of the qubit. After analyzing
+the game play file, we realized that the state update should be different for team 0 and team 1.
+For team 0, the previous actions include team 0's action in the previous round and team 1's action
+in the previous round. The current state should be updated by these two operations followed by a rotation.
+For team 1, the previous actions include team 1's action in the previous round and team 0's action in the 
+current round. Therefore, the current state shoud be updated by actions in the order of team 1'action, 
+a rotation, and team 0's action.
+
 By analyzing the game rules, we figured out different functionality of different cards,
 and can make different effects on different playing stage.
 For example, the REVERSE card can reverse the $\theta$ rotation direction of qubit,
@@ -47,7 +55,7 @@ cards in hand than the opponents, then we will have more possibilities to win.
 Because we are using REVERSE and PAULIZ cards properly in the earlier stage, so
 when we accepts some REVERSE or PAULIZ cards and can use them when needed, then
 before round 99, we will have a much more larger winning percentage then the opponents.
-Since the REVERSE and PAULIZ takes ratively high possibilities,
+Since the REVERSE and PAULIZ takes relatively high possibilities,
 Z (27%) and R (21%). So this situation almost always happen.
 
 For the final stage, when we stores a sufficient amount of PAULIX cards, then we will
@@ -56,7 +64,7 @@ win the game in high possibility.
 3) When should it have trouble?
 
 There is a unfavorable situation for our earlier stage playing strategy. If we
-turn the rotation direction in a favorable dirction to us too early, and we
+turn the rotation direction in a favorable direction to us too early, and we
 have already get 5 PAULIX cards, which means we will not again adjust our cards,
 then after the coefficient of our team reaches 1.00, it will begin to decrease.
 Then properly in the final stage, the situation is not good for us.
