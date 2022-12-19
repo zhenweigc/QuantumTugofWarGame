@@ -344,5 +344,25 @@ class MyStrategy(GameBot):
         else:
             return False;
 
+    '''
+    Return if using a X gate here is worth it
+    diff is a threshold.
+    '''
+    def X_good(self, team, diff) -> bool:
+        temp_state = self.cur_state;
+        temp_rt = rotation_matrix(self.cur_direction * self.theta);
+        #If not applying X gate here.
+        temp_me = np.absolute(np.dot(temp_rt, temp_state)[team]);
+        #if (temp_me >= 1 - np.absolute(diff)):
+        #    return False;
+
+        X = np.array([0, 1], [1, 0]);
+        temp_state = np.dot(temp_rt, np.dot(X, temp_state));
+        temp_after = np.absolute(temp_state[team]);
+        if (temp_me + np.absolute(diff) < temp_after):
+            return True;
+        else:
+            return False;
+
     def rotation_matrix(self, theta) -> np.array:
         return np.array([[np.cos(theta / 2), -np.sin(theta / 2)], [np.sin(theta / 2), np.cos(theta / 2)]])
