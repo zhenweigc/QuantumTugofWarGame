@@ -43,7 +43,8 @@ These strategy makes us almost always in a more preferable state for early stage
 and this can save us a PAULIX card in the final stage, which enlarges the winning
 percentage of our team.
 
-For the final stage, we also check conditions before play any cards. We only
+For the final stage, we want to play the strongest card because we do not know how many rounds there
+will be after the current round. we also check conditions before play any cards. We only
 play PAULIX card if we are going to lose the game. This makes our storing PAULIX cards strategy
 more powerful, because we can take advantage of these PAULIX cards to win the game.
 We have the assumption that the other teams will also play PAULIX cards in the final
