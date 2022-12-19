@@ -75,9 +75,9 @@ class MyStrategy(GameBot):
             if GameAction.MEASURE in hand:
                 self.num_cards -= 1
                 return GameAction.MEASURE;
-            elif GameAction.H in hand:
+            elif GameAction.HADAMARD in hand:
                 self.num_cards -= 1
-                return GameAction.H;
+                return GameAction.HADAMARD;
             elif self.rotate(team) and GameAction.REVERSE in hand:
                 self.num_cards -= 1
                 return GameAction.REVERSE
