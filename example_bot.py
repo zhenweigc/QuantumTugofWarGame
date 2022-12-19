@@ -45,10 +45,11 @@ percentage of our team.
 
 For the final stage, we want to play the strongest card because we do not know how many rounds there
 will be after the current round. we also check conditions before play any cards. We only
-play PAULIX card if we are going to lose the game. This makes our storing PAULIX cards strategy
-more powerful, because we can take advantage of these PAULIX cards to win the game.
+play the better effect PAULIX card or HADAMARD card if we are going to lose the game.
+This makes our storing PAULIX cards strategy more powerful, because we can take advantage of 
+these strongest cards to win the game.
 We have the assumption that the other teams will also play PAULIX cards in the final
-stage if it seems the situation is not good for them. So if we have more PAULIX
+stage if it seems the situation is not good for them. So if we have more PAULIX and HADAMARD
 cards in hand than the opponents, then we will have more possibilities to win.
 
 2) When should it work well?
