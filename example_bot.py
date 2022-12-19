@@ -289,6 +289,10 @@ class MyStrategy(GameBot):
 
             return;
 
+    '''
+    Rotate() function return a boolean.
+    It indicates if rotating at this moment is actually useful or not.
+    '''
     def rotate(self, team) -> bool:
         temp_state = self.cur_state;
         tmp = rotation_matrix(self.cur_direction * self.theta);
@@ -302,8 +306,11 @@ class MyStrategy(GameBot):
         else:
             return False;
 
-
-    #Check if using a Z-gate is useful
+    '''
+    Check if using a Z-gate is useful by comparing the result before and after
+    applying such gate. If our team has a better chance of winning, then it is
+    good.
+    '''
     def Z_Good(self, team) -> bool:
         temp_state = self.cur_state;
         tmp = rotation_matrix(self.cur_direction * self.theta);
@@ -319,8 +326,9 @@ class MyStrategy(GameBot):
         else:
             return False;
 
-
-    #Check if using a H-gate is useful
+    '''
+    Check if using a H-gate is useful by the same way as what we did in Z_Good()
+    '''
     def H_good(self, team) -> bool:
         temp_state = self.cur_state;
         temp_rt = rotation_matrix(self.cur_direction * self.theta);
