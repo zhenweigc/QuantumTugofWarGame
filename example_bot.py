@@ -355,7 +355,7 @@ class MyStrategy(GameBot):
         #if (temp_me >= 1 - np.absolute(diff)):
         #    return False;
 
-        X = np.array([0, 1], [1, 0]);
+        X = np.array([[0, 1], [1, 0]]);
         temp_state = np.dot(temp_rt, np.dot(X, temp_state));
         temp_after = np.absolute(temp_state[team]);
         if (temp_me**2 + np.absolute(diff) < temp_after**2):
